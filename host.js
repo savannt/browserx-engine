@@ -35,6 +35,7 @@ server.on("connection", client => {
                     target.client.send(data);
                 }
             } else if(message.type === "create") {
+                console.log("Creating browser: " + message.uuid);
                 createBrowser(message.uuid, message.emulation);
             } else if(message.type === "created") {
                 const node = nodeMap.get(message.uuid);
@@ -45,7 +46,6 @@ server.on("connection", client => {
                 }));
             }
         }
-        console.log(data);
     });
 });
 
@@ -58,6 +58,7 @@ const createBrowser = async (uuid, emulation) => {
         for(let [key, value] of nodeMap.entries()) {
             if(value.connections === 0) {
                 
+                console.log("Found server to use!");
                 // we have found a node that has no connections
                 value.client.send(JSON.stringify({
                     type: "create",
