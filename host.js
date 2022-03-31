@@ -22,6 +22,7 @@ server.on("connection", client => {
                     uuid: message.uuid,
                     connections: 0
                 });
+                console.log("Added new node: " + message.uuid);
             }
         }
         console.log(data);
