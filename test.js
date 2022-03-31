@@ -8,27 +8,28 @@ const WebSocket = require("ws");
 const ws = new WebSocket(WS_URL);
 
 ws.on("open", () => {
-    console.log("Test client connected.");
-
-    ws.send(JSON.stringify({
-        type: "authclient",
-    }));
-
-    ws.send(JSON.stringify({
-        type: "create",
-        uuid,
-        emulation: "none"
-    }));
-
     ws.on("message", data => {
+        console.log(data);
         const message = JSON.parse(data);
-
+    
         if(message && message.type) {
             if(message.type === "created") {
                 const endpoint = message.endpoint;
                 console.log("Browser created on endpoint: " + endpoint);
             }
         }
-        console.log(JSON.stringify(message));
     });
+
+    console.log("Test client connected.");
+
+    ws.send(JSON.stringify({
+        type: "authclient",
+    }));
+
+    console.log("Creating browser...");
+    ws.send(JSON.stringify({
+        type: "create",
+        uuid,
+        emulation: "none"
+    }));
 });

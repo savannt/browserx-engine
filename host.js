@@ -7,6 +7,7 @@ const server = new ws.Server({ port: 8060 });
 
 
 let nodeMap = new Map();
+let clientMap = new Map();
 let clientConnections = 0;
 
 
@@ -35,11 +36,11 @@ server.on("connection", client => {
                     target.client.send(data);
                 }
             } else if(message.type === "create") {
+                clientMap.set(message.uuid, client);
                 console.log("Creating browser: " + message.uuid);
                 createBrowser(message.uuid, message.emulation);
             } else if(message.type === "created") {
-                const node = nodeMap.get(message.uuid);
-                node.client.send(JSON.stringify({
+                clientMap.get(message.uuid).send(JSON.stringify({
                     type: "created",
                     uuid: message.uuid,
                     endpoint: message.endpoint
