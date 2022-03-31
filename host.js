@@ -35,7 +35,7 @@ server.on("connection", client => {
                     target.client.send(data);
                 }
             } else if(message.type === "create") {
-                createBrowser(message.uuid, message.url, message.emulation);
+                createBrowser(message.uuid, message.emulation);
             } else if(message.type === "created") {
                 const node = nodeMap.get(message.uuid);
                 node.client.send(JSON.stringify({
@@ -49,7 +49,7 @@ server.on("connection", client => {
     });
 });
 
-const createBrowser = async (uuid, url, emulation) => {
+const createBrowser = async (uuid, emulation) => {
     if(nodeMap.size === 0) {
         
 
@@ -62,7 +62,6 @@ const createBrowser = async (uuid, url, emulation) => {
                 value.client.send(JSON.stringify({
                     type: "create",
                     uuid,
-                    url,
                     emulation
                 }));
                 value.connections++;

@@ -1,4 +1,4 @@
-module.exports = async (uuid, url, emulation) => {
+module.exports = async (emulation) => {
     emulation = emulation.toLowerCase();
 
     const stealth = require("puppeteer-extra-plugin-stealth")();

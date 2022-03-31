@@ -7,7 +7,7 @@ const uuid = require("uuidv4").uuid();
 const createRemoteBrowser = require("./RemoteBrowser.js");
 
 const WebSocket = require("ws");
-const BrowserInstance = require("./RemoteBrowser");
+const createRemoteBrowser = require("./RemoteBrowser");
 const ws = new WebSocket(WS_URL);
 
 ws.on("open", () => {
@@ -22,11 +22,10 @@ ws.on("open", () => {
         if(message && message.type) {
             if(message.type === "create") {
                 let uuid = message.uuid;
-                let url = message.url;
                 let emulation = message.emulation;
 
-                console.log(`Creating browser with uuid: ${uuid}, url: ${url}, emulation: ${emulation}`);
-                createRemoteBrowser(uuid, url, emulation).then(v => {
+                console.log(`Creating browser with uuid: ${uuid}, emulation: ${emulation}`);
+                createRemoteBrowser(emulation).then(v => {
                     ws.send(JSON.stringify({
                         type: "created",
                         uuid,
