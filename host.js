@@ -68,7 +68,7 @@ const createBrowser = async (uuid, emulation) => {
                 nodeMap.set(key, value);
 
                 // TODO: Return IP address
-                return { uuid: _uuid, ip: "" };
+                return { uuid, ip: "" };
             }
         }
     }

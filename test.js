@@ -16,7 +16,11 @@ ws.on("open", () => {
         type: "authclient",
     }));
 
-    
+    ws.send(JSON.stringify({
+        type: "create",
+        uuid,
+        emulation: "none"
+    }));
 
     ws.on("message", data => {
         const message = JSON.parse(data);
@@ -27,5 +31,6 @@ ws.on("open", () => {
                 console.log("Browser created on endpoint: " + endpoint);
             }
         }
+        console.log(JSON.stringify(message));
     });
 });
