@@ -24,6 +24,8 @@ ws.on("open", () => {
 
                 console.log(`Creating browser with uuid: ${uuid}, emulation: ${emulation}`);
                 createRemoteBrowser(emulation).then(v => {
+                    console.log(` -> Browser created`);
+                    console.log(` -> ${v}`);
                     ws.send(JSON.stringify({
                         type: "created",
                         uuid,

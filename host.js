@@ -56,7 +56,7 @@ const createBrowser = async (uuid, emulation) => {
 
     } else {
         for(let [key, value] of nodeMap.entries()) {
-            if(value.connections === 0) {
+            // if(value.connections === 0) {
                 
                 console.log("Found server to use!");
                 // we have found a node that has no connections
@@ -70,7 +70,7 @@ const createBrowser = async (uuid, emulation) => {
 
                 // TODO: Return IP address
                 return { uuid, ip: "" };
-            }
+            // }
         }
     }
     // TODO: Create a node we have none here
