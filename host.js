@@ -12,6 +12,10 @@ const server = new ws.Server({ port: 8060 });
 
 let nodeMap = new Map();
 
+setInterval(() => {
+    console.log("Connections: " + nodeMap.size);
+}, 1000);
+
 server.on("connection", client => {
     console.log("Connected to websocket");
     client.on("message", data => {
