@@ -4,8 +4,6 @@ const WS_URL = "ws://34.67.99.253:8060";
 
 const uuid = require("uuidv4").uuid();
 
-const createRemoteBrowser = require("./RemoteBrowser.js");
-
 const WebSocket = require("ws");
 const ws = new WebSocket(WS_URL);
 
