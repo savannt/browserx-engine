@@ -1,8 +1,4 @@
 console.log("Started!");
-
-const express = require("express");
-const app = express();
-
 const { uuid } = require("uuidv4");
 
 // create WS server for other nodes to connect to
@@ -11,6 +7,8 @@ const server = new ws.Server({ port: 8060 });
 
 
 let nodeMap = new Map();
+let clientConnections = 0;
+
 
 setInterval(() => {
     console.log("Connections: " + nodeMap.size);
@@ -28,6 +26,23 @@ server.on("connection", client => {
                     connections: 0
                 });
                 console.log("Added new node: " + message.uuid);
+            } else if(message.type === "authclient") {
+                clientConnections++;
+            } else if(message.type === "relay" && message.target) {
+                const target = nodeMap.get(message.target);
+                if(target) {
+                    console.log("-> Relayed message to " + message.target);
+                    target.client.send(data);
+                }
+            } else if(message.type === "create") {
+                createBrowser(message.uuid, message.url, message.emulation);
+            } else if(message.type === "created") {
+                const node = nodeMap.get(message.uuid);
+                node.client.send(JSON.stringify({
+                    type: "created",
+                    uuid: message.uuid,
+                    endpoint: message.endpoint
+                }));
             }
         }
         console.log(data);
@@ -43,12 +58,10 @@ const createBrowser = async (uuid, url, emulation) => {
         for(let [key, value] of nodeMap.entries()) {
             if(value.connections === 0) {
                 
-                const _uuid = uuid();
-
                 // we have found a node that has no connections
                 value.client.send(JSON.stringify({
                     type: "create",
-                    uuid: _uuid,
+                    uuid,
                     url,
                     emulation
                 }));
@@ -63,16 +76,3 @@ const createBrowser = async (uuid, url, emulation) => {
     // TODO: Create a node we have none here
     // TODO: -> Wait for node to spin up
 }
-
-app.get("/delete", (req, res) => {
-
-});
-
-app.get("/create", (req, res) => {
-    const uuid = uuid();
-    createBrowser.then(data => {
-        res.send(JSON.stringify(data));
-    });
-});
-
-app.listen(process.env.port || 8070);
