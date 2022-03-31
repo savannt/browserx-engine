@@ -13,6 +13,7 @@ const server = new ws.Server({ port: 8060 });
 let nodeMap = new Map();
 
 server.on("connection", client => {
+    console.log("Connected to websocket");
     client.on("message", data => {
         const message = JSON.parse(data);
         if(message.type) {
