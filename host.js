@@ -7,7 +7,7 @@ const { uuid } = require("uuidv4");
 
 // create WS server for other nodes to connect to
 const ws = require("ws");
-const server = new ws.Server({ port: 8080 });
+const server = new ws.Server({ port: 8060 });
 
 
 let nodeMap = new Map();
@@ -69,4 +69,4 @@ app.get("/create", (req, res) => {
     });
 });
 
-app.listen(process.env.port || 8080);
+app.listen(process.env.port || 8070);

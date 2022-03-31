@@ -1,6 +1,6 @@
 // connect to WS server
 
-const WS_URL = "ws://localhost:8080";
+const WS_URL = "ws://localhost:8070";
 
 const uuid = require("uuidv4").uuid();
 
@@ -22,7 +22,7 @@ ws.on("open", () => {
                 let url = message.url;
                 let emulation = message.emulation;
 
-                
+
             }
         }
     });
