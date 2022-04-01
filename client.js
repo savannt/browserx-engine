@@ -8,13 +8,14 @@ const WebSocket = require("ws");
 const createRemoteBrowser = require("./RemoteBrowser");
 const ws = new WebSocket(WS_URL);
 
+
 ws.on("open", () => {
     ws.send(JSON.stringify({
         type: "auth",
         uuid,
     }));
 
-    ws.on("message", data => {
+    ws.on("message", async data => {
         const message = JSON.parse(data);
 
         if(message && message.type) {
@@ -23,15 +24,16 @@ ws.on("open", () => {
                 let emulation = message.emulation;
 
                 console.log(`Creating browser with uuid: ${uuid}, emulation: ${emulation}`);
-                createRemoteBrowser(emulation).then(v => {
-                    console.log(` -> Browser created`);
-                    console.log(` -> ${v}`);
-                    ws.send(JSON.stringify({
-                        type: "created",
-                        uuid,
-                        endpoint: v
-                    }))
-                });
+                let wsURL = createRemoteBrowser(emulation);
+                wsURL = wsURL.replace("127.0.0.1", "35.193.47.127");
+
+                console.log(` -> Browser created`);
+                console.log(` -> ${wsURL}`);
+                ws.send(JSON.stringify({
+                    type: "created",
+                    uuid,
+                    endpoint: wsURL
+                }));
             }
         }
     });

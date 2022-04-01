@@ -21,6 +21,9 @@
   "dependencies": {
     "express": "^4.17.3",
     "git-pull": "^0.1.0",
+    "puppeteer": "^13.5.2",
+    "puppeteer-extra": "^3.2.3",
+    "puppeteer-extra-plugin-stealth": "^2.9.0",
     "uuidv4": "^6.2.13",
     "ws": "^8.5.0"
   }
