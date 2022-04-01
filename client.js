@@ -28,22 +28,6 @@ ws.on("open", () => {
                 console.log(`Creating browser with uuid: ${uuid}, emulation: ${emulation}`);
 
                 let wsURL = await createRemoteBrowser(emulation);
-
-                const cdp = new WebSocket(wsURL);
-                cdp.on("open", () => {
-                    const server = new WebSocket.Server({ port: 8060 });
-                    server.on("connection", client => {
-                        cdpClient = client;
-                        client.on("message", (data) => {
-                            cdp.send(data);
-                        });
-                    });
-
-                    cdp.on("message", (data) => {
-                        cdpClient.send(data);
-                    });
-                });
-
                 wsURL = wsURL.replace("127.0.0.1", "35.193.47.127");
                 console.log(`Browser created on endpoint: ${wsURL}`);
                 console.log(`-> Browser created`);
@@ -51,7 +35,7 @@ ws.on("open", () => {
                 ws.send(JSON.stringify({
                     type: "created",
                     uuid,
-                    endpoint: `https://35.193.47.127:8060`
+                    endpoint: wsURL
                 }));
             }
         }
