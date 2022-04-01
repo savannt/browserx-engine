@@ -8,6 +8,7 @@ const WebSocket = require("ws");
 const createRemoteBrowser = require("./RemoteBrowser");
 const ws = new WebSocket(WS_URL);
 
+console.log("Client started!");
 
 ws.on("open", () => {
     ws.send(JSON.stringify({
