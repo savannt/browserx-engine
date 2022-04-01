@@ -1,6 +1,6 @@
 // connect to WS server
 
-const WS_URL = "ws://34.67.99.253:8060";
+const WS_URL = "ws://34.121.23.61:8060";
 
 const uuid = require("uuidv4").uuid();
 

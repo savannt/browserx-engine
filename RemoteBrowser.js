@@ -71,5 +71,14 @@ module.exports = async (emulation) => {
             '--disable-infobars'
         ]
     });
-    return browser.wsEndpoint();
+    let url = browser.wsEndpoint();
+    const b2 = await pup.connect({
+        browserWSEndpoint: url
+    });
+    const page = await b2.newPage();
+    await page.goto("https://google.com");
+    console.log(await page.screenshot({
+        encoding: "base64"
+    }));
+    return url
 }
