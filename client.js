@@ -32,7 +32,7 @@ const createWSProxy = (port, host) => {
         cdp.on("open", async () => {
             // console.log("Connected to CDP!");
         
-            const proxyUrl = `ws://127.0.0.1:8060/devtools/browser/${url.split("devtools/browser/")[1]}`;
+            const proxyUrl = `ws://127.0.0.1:8060/devtools/browser/${host.split("devtools/browser/")[1]}`;
             resolve({
                 url: proxyUrl,
                 destroy: () => {
