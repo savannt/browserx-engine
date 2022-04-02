@@ -72,7 +72,7 @@ ws.on("open", () => {
                 console.log(`Creating browser with uuid: ${uuid}, emulation: ${emulation}`);
 
                 const wsURL = await createRemoteBrowser(emulation);
-                const wsProxy = await createWSProxy(8060, wsURL);
+                const wsProxy = (await createWSProxy(8060, wsURL)).url;
                 wsProxy = wsProxy.replace("127.0.0.1", "35.193.47.127");
 
 
