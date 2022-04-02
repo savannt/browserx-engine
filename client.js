@@ -8,6 +8,7 @@ const createRemoteBrowser = require("./RemoteBrowser");
 const WebSocket = require("ws");
 const ws = new WebSocket(WS_URL);
 
+let browsers = 0;
 
 
 const createWSProxy = (port, host) => {
@@ -72,7 +73,7 @@ ws.on("open", () => {
                 console.log(`Creating browser with uuid: ${uuid}, emulation: ${emulation}`);
 
                 const wsURL = await createRemoteBrowser(emulation);
-                let wsProxy = (await createWSProxy(8060, wsURL)).url;
+                let wsProxy = (await createWSProxy(8060 + (browsers * 10), wsURL)).url;
                 wsProxy = wsProxy.replace("127.0.0.1", "35.193.47.127");
 
 
@@ -84,6 +85,7 @@ ws.on("open", () => {
                     uuid,
                     endpoint: wsProxy
                 }));
+                browsers++;
             }
         }
     });
