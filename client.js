@@ -15,7 +15,7 @@ const createWSProxy = (port, host) => {
         const ws = require("ws");
 
         const proxy = new ws.Server({ port });
-        const cdp = new ws(url);
+        const cdp = new ws(host);
 
         proxy.on("connection", _client => {
             client = _client;
