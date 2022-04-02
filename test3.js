@@ -1,4 +1,4 @@
-const url = "ws://35.193.47.127:45231/devtools/browser/804680de-5d47-45c5-8b27-03b9d59f0d95";
+const url = "ws://35.193.47.127:8060/devtools/browser/80ec3f5c-b9b0-47c8-8774-6c49dd846c67";
 
 (async () => {
     const puppeteer = require("puppeteer-extra");

@@ -10,6 +10,8 @@ let nodeMap = new Map();
 let clientMap = new Map();
 let clientConnections = 0;
 
+const EventEmitter = require("events");
+const events = new EventEmitter();
 
 setInterval(() => {
     console.log("Connections: " + nodeMap.size);
@@ -51,14 +53,9 @@ server.on("connection", client => {
 });
 
 const createBrowser = async (uuid, emulation) => {
-    if(nodeMap.size === 0) {
-        
-
-
-    } else {
+    const search = () => {
         for(let [key, value] of nodeMap.entries()) {
-            // if(value.connections === 0) {
-                
+            if(value.connections < 5) {
                 console.log("Found server to use!");
                 // we have found a node that has no connections
                 value.client.send(JSON.stringify({
@@ -68,10 +65,29 @@ const createBrowser = async (uuid, emulation) => {
                 }));
                 value.connections++;
                 nodeMap.set(key, value);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    const wait = () => {
+        return new Promise(resolve => {
+            let interval = setInterval(() => {
+                if(search()) {
+                    clearInterval(interval);
+                    return resolve();
+                }
+                console.log(" ... ");
+            }, 500);
+        });
+    }
 
-                // TODO: Return IP address
-                return { uuid, ip: "" };
-            // }
+    if(nodeMap.size === 0) {
+        await wait();
+    } else {
+        if(!(search())) {
+            await wait();
         }
     }
     // TODO: Create a node we have none here
