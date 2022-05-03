@@ -1,10 +1,9 @@
-// connect to WS server
 
-const WS_URL = "ws://10.128.0.7:8060";
 
 const uuid = require("uuidv4").uuid();
 const createRemoteBrowser = require("./RemoteBrowser");
 
+const WS_URL = "ws://10.128.0.7:8060";
 const WebSocket = require("ws");
 const ws = new WebSocket(WS_URL);
 

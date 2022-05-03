@@ -1,0 +1,42 @@
+.dialog {
+    display: flex;
+    flex-direction: column;
+
+    width: 50vw;
+    margin: auto;
+    margin-top: 10vh;
+    padding: 10px;
+
+    border: 1px solid black;
+    border-radius: 5px;
+
+    background-color: #ededed;
+}
+
+.header-bar {
+    margin: -10px -10px 0px -10px;
+    padding: 10px;
+
+    background-color: red;
+    margin-bottom: 25px;
+    border-radius: 4px 4px 0px 0px;
+}
+
+.header-bar h2 {
+    font-size: 20px;
+    line-height: 20px;
+    padding: 0;
+    margin: 10px 5px;
+    font-family: monospace;
+    color: white;
+}
+
+.dialog h4 {
+    margin: 0;
+    font-size: 14px;
+    font-family: monospace;
+}
+
+.dialog input {
+    margin-bottom: 15px;
+}

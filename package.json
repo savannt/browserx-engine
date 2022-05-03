@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/B3N909/browserx-engine#readme",
   "dependencies": {
+    "colors": "^1.4.0",
     "express": "^4.17.3",
     "git-pull": "^0.1.0",
     "puppeteer": "^13.5.2",
