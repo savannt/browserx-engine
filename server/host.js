@@ -2,7 +2,7 @@
 //  - ALL CLIENT INTERACTIONS ARE ROUTED THROUGH THIS SERVER FIRST
 
 
-console.log("Started!");
+console.log("Started Host server!");
 const { uuid } = require("uuidv4");
 
 // create WS server for other nodes to connect to
@@ -13,19 +13,20 @@ const EventEmitter = require("events");
 const events = new EventEmitter();
 
 
-const clientsConnected = 0;
-const clientMap = new Map();
+let clientsConnected = 0;
+let clientMap = new Map();
 
-const nodesConnected = 0;
-const nodeMap = new Map();
+let nodesConnected = 0;
+let nodeMap = new Map();
 
 // console log active connections every 1s
 setInterval(() => {
     console.log("Clients connected: " + clientMap.size);
     console.log("Nodes connected: " + nodeMap.size);
-}, 1000);
+    console.log("---------------------------------------");
+}, 5000);
 
-
+const API_KEYS = ["defaultApiKey"];
 
 server.on("connection", client => {
     console.log("Connected to websocket");
@@ -38,7 +39,7 @@ server.on("connection", client => {
 
             if(message.type === "auth_node") {
                 client.id = message.id;
-                nodeMap.set(message.id, { client, sockets: [] });
+                nodeMap.set(message.id, { client, availableSockets: [], sockets: [] });
                 nodesConnected++;
                 console.log("New node connected: " + message.id);
             }
@@ -53,26 +54,65 @@ server.on("connection", client => {
             if(message.type === "node_cdp_ready") {
                 const wsEndpoint = message.wsEndpoint;
                 let port = message.port;
+                
+                console.log(`[${message.type}] internalWsEndpoint: ${wsEndpoint} newPort: ${port}`);
 
-                // create websocket server wrapper and relay all messages to wsEndpoint
-                const wsClient = new ws(wsEndpoint);
-                const wsServer = new ws.Server({ port });
+                const proxyWS = new ws.Server({ port });
+                const cdpWS = new ws(wsEndpoint);
 
-                wsClient.on("message", data => {
-                    wsServer.clients.forEach(client => {
-                        client.send(data);
+
+                let proxyClient;
+                proxyWS.on("connection", _client => {
+                    proxyClient = _client;
+                    proxyClient.on("message", msg => {
+                        cdpWS.send(msg.toString());
                     });
                 });
 
-                wsServer.on("connection", wsClient => {
-                    wsClient.on("message", data => {
-                        wsClient.send(data);
-                    });
+                cdpWS.on("message", msg => {
+                    proxyClient.send(msg.toString());
                 });
 
-                // push wsServer public URL to nodeMap.sockets
-                const wsURL = wsServer.address().address + ":" + wsServer.address().port;
-                nodeMap.get(client.id).sockets.push(wsURL);
+                cdpWS.on("open", async () => {
+                    const proxyUrl = `ws://127.0.0.1:${port}/devtools/browser/${wsEndpoint.split("devtools/browser/")[1]}`;
+                    nodeMap.get(client.id).sockets.push(proxyUrl);
+                    nodeMap.get(client.id).availableSockets.push(proxyUrl);
+                    console.log("[node_cdp_proxy] " + proxyUrl);
+                });
+            }
+
+            if(message.type === "authenticate") {
+                const key = message.key;
+                
+
+                // if key exists
+                if(API_KEYS.includes(key)) {
+
+                    let interval = setInterval(() => {
+                        // loop all nodes
+                        for(const [nodeId, node] of nodeMap) {
+
+                            if(node.availableSockets.length > 0) {
+                                const socket = node.availableSockets.shift();
+
+                                client.send(JSON.stringify({
+                                    type: "authenticate",
+                                    success: true,
+                                    socket
+                                }));
+                                clearInterval(interval);
+                                return;
+                            }
+                        }
+                        console.log(" ... waiting for nodes to connect, waiting to finish authenticating");
+                    }, 150);
+                } else {
+                    client.send(JSON.stringify({
+                        type: "authenticate",
+                        success: false,
+                        error: "Invalid API key"
+                    }));
+                }
             }
         }
     });

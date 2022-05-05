@@ -19,9 +19,12 @@
   },
   "homepage": "https://github.com/B3N909/browserx-engine#readme",
   "dependencies": {
+    "chrome-paths": "^1.0.1",
     "colors": "^1.4.0",
     "express": "^4.17.3",
     "git-pull": "^0.1.0",
+    "internal-ip": "^7.0.0",
+    "local-ipv4-address": "0.0.2",
     "puppeteer": "^13.5.2",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
