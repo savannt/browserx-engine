@@ -9,7 +9,7 @@ module.exports = (isLocal) => {
 
 
         const internalIp = "127.0.0.1";
-        console.log("Started host node on: " + internalIp);
+        console.log("Started client node on: " + internalIp);
             
         let WS_URL = "ws://10.128.0.5:8060";
         if(isLocal) WS_URL = "ws://localhost:8060";
@@ -20,6 +20,7 @@ module.exports = (isLocal) => {
         const ws = new WebSocket(WS_URL);
             
         ws.on("open", () => {
+            console.log("Client connected to host!");
             ws.send(JSON.stringify({ type: "auth_node", id }));
         
             ws.on("message", async data => {
