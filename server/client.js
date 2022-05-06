@@ -1,5 +1,5 @@
 module.exports = (isLocal) => {
-    require("child_process").exec("pm2 link qirsigsob1arlad 07hc86pxfzy4reh", (err, stdout, stderr) => {
+    require("child_process").exec(`pm2 link qirsigsob1arlad 07hc86pxfzy4reh ${Math.floor(Math.random() * 999)}`, (err, stdout, stderr) => {
         console.log("[Startup] Linked to pm2.io");
 
         if(typeof isLocal === "undefined") isLocal = false;
