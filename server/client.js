@@ -31,7 +31,7 @@ module.exports = (isLocal) => {
         let WS_URL = "ws://10.128.0.5:8060";
         if(isLocal) WS_URL = "ws://localhost:8060";
 
-        const DEFAULT_BROWSERS = 5;
+        const DE8FAULT_BROWSERS = 5;
         
         const WebSocket = require("ws");
         const ws = new WebSocket(WS_URL);
