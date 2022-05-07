@@ -28,7 +28,7 @@ module.exports = (isLocal) => {
         const internalIp = getInternalIPv4("10.128.0.");
         console.log("Started client node on: " + internalIp);
             
-        let WS_URL = "ws://35.208.194.25:8060";
+        let WS_URL = "ws://10.128.0.5:8060";
         if(isLocal) WS_URL = "ws://localhost:8060";
 
         const DEFAULT_BROWSERS = 5;
