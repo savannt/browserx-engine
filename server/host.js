@@ -34,7 +34,7 @@ server.on("connection", client => {
     // on message
     client.on("message", data => {
         const message = JSON.parse(data);
-        
+
         if(message.type) {
 
             if(message.type === "auth_node") {
@@ -53,32 +53,35 @@ server.on("connection", client => {
 
             if(message.type === "node_cdp_ready") {
                 const wsEndpoint = message.wsEndpoint;
-                let port = message.port;
+                // let port = message.port;
                 
-                console.log(`[${message.type}] internalWsEndpoint: ${wsEndpoint} newPort: ${port}`);
+                console.log(`[${message.type}] received wsProxyEndpoint: ${wsEndpoint}`);
 
-                const proxyWS = new ws.Server({ port });
-                const cdpWS = new ws(wsEndpoint);
+                nodeMap.get(client.id).sockets.push(wsEndpoint);
+                nodeMap.get(client.id).availableSockets.push(wsEndpoint);
+
+                // const proxyWS = new ws.Server({ port });
+                // const cdpWS = new ws(wsEndpoint);
 
 
-                let proxyClient;
-                proxyWS.on("connection", _client => {
-                    proxyClient = _client;
-                    proxyClient.on("message", msg => {
-                        cdpWS.send(msg.toString());
-                    });
-                });
+                // let proxyClient;
+                // proxyWS.on("connection", _client => {
+                //     proxyClient = _client;
+                //     proxyClient.on("message", msg => {
+                //         cdpWS.send(msg.toString());
+                //     });
+                // });
 
-                cdpWS.on("message", msg => {
-                    proxyClient.send(msg.toString());
-                });
+                // cdpWS.on("message", msg => {
+                //     proxyClient.send(msg.toString());
+                // });
 
-                cdpWS.on("open", async () => {
-                    const proxyUrl = `ws://127.0.0.1:${port}/devtools/browser/${wsEndpoint.split("devtools/browser/")[1]}`;
-                    nodeMap.get(client.id).sockets.push(proxyUrl);
-                    nodeMap.get(client.id).availableSockets.push(proxyUrl);
-                    console.log("[node_cdp_proxy] " + proxyUrl);
-                });
+                // cdpWS.on("open", async () => {
+                //     const proxyUrl = `ws://127.0.0.1:${port}/devtools/browser/${wsEndpoint.split("devtools/browser/")[1]}`;
+                //     nodeMap.get(client.id).sockets.push(proxyUrl);
+                //     nodeMap.get(client.id).availableSockets.push(proxyUrl);
+                //     console.log("[node_cdp_proxy] " + proxyUrl);
+                // });
             }
 
             if(message.type === "authenticate") {
