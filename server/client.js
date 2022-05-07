@@ -1,5 +1,7 @@
 module.exports = (isLocal) => {
     
+    const ws = require("ws");
+
     const getInternalIPv4 = (includes) => {
         const { networkInterfaces } = require('os');
         const nets = networkInterfaces();
