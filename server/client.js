@@ -39,20 +39,20 @@ module.exports = (isLocal) => {
         ws.on("open", () => {
             console.log("Client connected to host!");
             ws.send(JSON.stringify({ type: "auth_node", id }));
-        
+            
+            for(let i = 0; i < DEFAULT_BROWSERS; i++) {
+                createRemoteBrowser("desktop").then(wsEndpoint => {
+                    // replace 127.0.0.1 for internal IP
+                    if(!isLocal) wsEndpoint = wsEndpoint.replace("127.0.0.1", internalIp);
+                    const port = Math.floor(8000 + (Math.random() * 1000));
+                    
+                    ws.send(JSON.stringify({ type: "node_cdp_ready", wsEndpoint, port }));
+                });
+            }
+
             ws.on("message", async data => {
                 
             });
         });
-        
-        for(let i = 0; i < DEFAULT_BROWSERS; i++) {
-            createRemoteBrowser("desktop").then(wsEndpoint => {
-                // replace 127.0.0.1 for internal IP
-                if(!isLocal) wsEndpoint = wsEndpoint.replace("127.0.0.1", internalIp);
-                const port = Math.floor(8000 + (Math.random() * 1000));
-                
-                ws.send(JSON.stringify({ type: "node_cdp_ready", wsEndpoint, port }));
-            });
-        }
     });
 }
