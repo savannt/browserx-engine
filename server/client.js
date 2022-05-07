@@ -12,6 +12,7 @@ module.exports = (isLocal) => {
                 }
             }
         }
+        console.log("[ERROR] Failed finding internal IP");
         return "127.0.0.1";
     }
     
