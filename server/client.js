@@ -1,4 +1,20 @@
 module.exports = (isLocal) => {
+    
+    const getInternalIPv4 = (includes) => {
+        const { networkInterfaces } = require('os');
+        const nets = networkInterfaces();
+        for (const name of Object.keys(nets)) {
+            for (const net of nets[name]) {
+                if(net.family === "IPv4" || net.family === 4) {
+                    if(net.address.includes(includes)) {
+                        return net.address;
+                    }
+                }
+            }
+        }
+        return "127.0.0.1";
+    }
+    
     require("child_process").exec(`pm2 link qirsigsob1arlad 07hc86pxfzy4reh node${Math.floor(Math.random() * 999)}`, (err, stdout, stderr) => {
         console.log("[Startup] Linked to pm2.io");
 
@@ -8,13 +24,13 @@ module.exports = (isLocal) => {
         const createRemoteBrowser = require("./RemoteBrowser");
 
 
-        const internalIp = "127.0.0.1";
+        const internalIp = getInternalIPv4("10.128.0.");
         console.log("Started client node on: " + internalIp);
             
-        let WS_URL = "ws://10.128.0.5:8060";
+        let WS_URL = "ws://35.208.194.25:8060";
         if(isLocal) WS_URL = "ws://localhost:8060";
 
-        const DEFAULT_BROWSERS = 2;
+        const DEFAULT_BROWSERS = 5;
         
         const WebSocket = require("ws");
         const ws = new WebSocket(WS_URL);

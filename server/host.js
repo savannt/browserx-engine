@@ -34,7 +34,7 @@ server.on("connection", client => {
     // on message
     client.on("message", data => {
         const message = JSON.parse(data);
-
+        
         if(message.type) {
 
             if(message.type === "auth_node") {
