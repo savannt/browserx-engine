@@ -19,7 +19,7 @@ module.exports = (isLocal) => {
     }
 
     const createPublicWSProxy = (internalIP, internalWS, publicPort, callback) => {
-        const proxyWS = new ws.Server({ publicPort });
+        const proxyWS = new ws.Server({ port: publicPort });
         const cdpWS = new ws(internalWS);
 
 
