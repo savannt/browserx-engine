@@ -1,6 +1,11 @@
+module.exports.wsURL = "ws://127.0.0.1:8060";
+module.exports = require("puppeteer");
+
+let isConnected = false;
+
 const ws = require("ws");
 const id = require("uuid").v4();
-const client = new ws("ws://localhost:8060");
+const client = new ws(module.exports.wsURL);
 
 // events
 const EventEmitter = require("events");
@@ -32,22 +37,32 @@ client.on("open", () => {
             }
         }
     });
-    if(module.exports.ready) module.exports.ready();
+    isConnected = true;
+    if(module.exports.onConnect) module.exports.onConnect();
 });
 
-module.exports = require("puppeteer");
 module.exports.activate = (key) => {
     return new Promise(r => {
-        console.log("Key: " + key);
-        client.send(JSON.stringify({
-            type: "authenticate", key
-        }));
-        events.once("socket", async socket => {
-            // pptr.connect
-            const browser = await module.exports.connect({
-                browserWSEndpoint: socket
+        const _r = () => {
+            console.log("Key: " + key);
+            client.send(JSON.stringify({
+                type: "authenticate", key
+            }));
+            events.once("socket", async socket => {
+                // pptr.connect
+                const browser = await module.exports.connect({
+                    browserWSEndpoint: socket
+                });
+                r(browser);
             });
-            r(browser);
-        });
+        }
+
+        if(!isConnected) {
+            module.exports.onConnect = () => {
+                _r();
+            };
+        } else {
+            _r();
+        }
     });
 }
