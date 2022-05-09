@@ -1,5 +1,6 @@
-module.exports.wsURL = "ws://127.0.0.1:8060";
 module.exports = require("puppeteer");
+module.exports.wsURL = "ws://35.208.194.25:8060";
+
 
 let isConnected = false;
 
@@ -58,11 +59,26 @@ module.exports.activate = (key) => {
         }
 
         if(!isConnected) {
+            console.log(" ... waiting for connection");
             module.exports.onConnect = () => {
                 _r();
             };
         } else {
+            console.log(" ... connected!");
             _r();
         }
     });
 }
+
+module.exports._launch = module.exports.launch;
+
+module.exports.launch = (options) => {
+    if(options.electron) {
+        // const app = options.electron;
+        // const { BrowserWindow } = require("electron");
+
+        // const browser = new BrowserWindow(options);
+
+
+    } else module.exports._launch(options);
+};

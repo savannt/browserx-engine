@@ -1,6 +1,7 @@
 const BrowserX = require("./browserx.js");
+// BrowserX.wsURL = "ws://127.0.0.1:8060"; // FOR LOCAL HOST
 
-BrowserX.ready = async () => {
+(async () => {
     console.log("Connected to BrowserX servers...");
 
     // authenticate with API and request a new remote browser ("socket") to use
@@ -11,5 +12,5 @@ BrowserX.ready = async () => {
     await page.goto("https://www.google.com");
     // save screenshot to file
     await page.screenshot({ path: "google.png" });
-    console.log("Screenshotted");    
-}
+    console.log("Screenshotted");  
+})();
