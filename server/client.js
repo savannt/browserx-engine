@@ -71,7 +71,7 @@ module.exports = (isLocal) => {
                 // listen for disconnect
                 proxyWS.on("close", () => {
                     console.log("Cleaning up browser...");
-                    ws.send(JSON.stringify({ type: "node_cdp_cleanup", wsEndpoint: proxyUrl }));
+                    hostWs.send(JSON.stringify({ type: "node_cdp_cleanup", wsEndpoint: proxyUrl }));
                     cleanupFunc();
                     createBrowser();
                 });
@@ -94,7 +94,7 @@ module.exports = (isLocal) => {
             cdpWS.on("open", async () => {
                 console.log("[ws_proxy] " + proxyUrl);
 
-                ws.send(JSON.stringify({ type: "node_cdp_ready", wsEndpoint: proxyUrl }));
+                hostWs.send(JSON.stringify({ type: "node_cdp_ready", wsEndpoint: proxyUrl }));
             });
         }
 
