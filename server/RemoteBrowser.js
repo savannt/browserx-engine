@@ -71,7 +71,10 @@ module.exports = async (emulation) => {
             '--disable-infobars'
         ]
     });
+    const process = browser.process();
     let url = browser.wsEndpoint();
     browser.disconnect();
-    return url;
+    return { url, cleanupFunction: () => {
+        process.kill(-1);
+    }} ;
 }

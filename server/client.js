@@ -1,4 +1,6 @@
 module.exports = (isLocal) => {
+
+    const AUTO_TIMEOUT = 60 * 1000; // 60 seconds of no activity
     
     const ws = require("ws");
 
@@ -36,31 +38,6 @@ module.exports = (isLocal) => {
         console.log("[ERROR] Failed finding internal IP");
         return "127.0.0.1";
     }
-
-    const createPublicWSProxy = (internalIP, internalWS, publicPort, externalIP, callback) => {
-        const proxyWS = new ws.Server({ port: publicPort });
-        const cdpWS = new ws(internalWS);
-
-
-        let proxyClient;
-        proxyWS.on("connection", _client => {
-            proxyClient = _client;
-            proxyClient.on("message", msg => {
-                cdpWS.send(msg.toString());
-            });
-        });
-
-        cdpWS.on("message", msg => {
-            proxyClient.send(msg.toString());
-        });
-
-        cdpWS.on("open", async () => {
-            const proxyUrl = `ws://${externalIP}:${publicPort}/devtools/browser/${internalWS.split("devtools/browser/")[1]}`;
-            console.log("[ws_proxy] " + proxyUrl);
-
-            callback(proxyUrl);
-        });
-    }
     
     require("child_process").exec(`pm2 link qirsigsob1arlad 07hc86pxfzy4reh node${Math.floor(Math.random() * 999)}`, async (err, stdout, stderr) => {
         console.log("[Startup] Linked to pm2.io");
@@ -70,6 +47,56 @@ module.exports = (isLocal) => {
         const id = require("uuid").v4();
         const createRemoteBrowser = require("./RemoteBrowser");
 
+        const createBrowser = async () => {
+            console.log("... creating browser");
+            const chromeObj = await createRemoteBrowser("desktop");
+            const cleanupFunc = chromeObj.cleanupFunction;
+            const wsEndpoint = chromeObj.url;
+
+            const port = Math.floor(8000 + (Math.random() * 1000));
+            const proxyUrl = `ws://${externalIP}:${port}/devtools/browser/${wsEndpoint.split("devtools/browser/")[1]}`;
+
+
+            const proxyWS = new ws.Server({ port });
+            const cdpWS = new ws(wsEndpoint);
+
+
+            let proxyClient;
+            proxyWS.on("connection", _client => {
+                proxyClient = _client;
+                proxyClient.on("message", msg => {
+                    cdpWS.send(msg.toString());
+                });
+
+                // listen for disconnect
+                proxyWS.on("close", () => {
+                    console.log("Cleaning up browser...");
+                    ws.send(JSON.stringify({ type: "node_cdp_cleanup", wsEndpoint: proxyUrl }));
+                    cleanupFunc();
+                    createBrowser();
+                });
+            });
+
+            let lastTimeout = -1;
+            cdpWS.on("message", msg => {
+                proxyClient.send(msg.toString());
+                if(lastTimeout !== -1) {
+                    clearTimeout(lastTimeout);
+                    lastTimeout = setTimeout(() => {
+                        console.log("[WSProxy] AutoTimed out");
+                        cdpWS.close();
+                        proxyWS.close();
+                    }, AUTO_TIMEOUT);
+                }
+
+            });
+
+            cdpWS.on("open", async () => {
+                console.log("[ws_proxy] " + proxyUrl);
+
+                ws.send(JSON.stringify({ type: "node_cdp_ready", wsEndpoint: proxyUrl }));
+            });
+        }
 
         const internalIp = getInternalIPv4("10.128.0.");
         const externalIP = await publicIPv4();
@@ -88,13 +115,7 @@ module.exports = (isLocal) => {
             ws.send(JSON.stringify({ type: "auth_node", id }));
             
             for(let i = 0; i < DEFAULT_BROWSERS; i++) {
-                createRemoteBrowser("desktop").then(wsEndpoint => {
-                    const port = Math.floor(8000 + (Math.random() * 1000));
-
-                    createPublicWSProxy(internalIp, wsEndpoint, port, externalIP, proxyUrl => {
-                        ws.send(JSON.stringify({ type: "node_cdp_ready", wsEndpoint: proxyUrl }));
-                    });
-                });
+                createBrowser();
             }
 
             ws.on("message", async data => {
