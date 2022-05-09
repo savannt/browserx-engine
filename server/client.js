@@ -108,17 +108,17 @@ module.exports = (isLocal) => {
         const DEFAULT_BROWSERS = 5;
         
         const WebSocket = require("ws");
-        const ws = new WebSocket(WS_URL);
+        const hostWs = new WebSocket(WS_URL);
             
-        ws.on("open", () => {
+        hostWs.on("open", () => {
             console.log("Client connected to host!");
-            ws.send(JSON.stringify({ type: "auth_node", id }));
+            hostWs.send(JSON.stringify({ type: "auth_node", id }));
             
             for(let i = 0; i < DEFAULT_BROWSERS; i++) {
                 createBrowser();
             }
 
-            ws.on("message", async data => {
+            hostWs.on("message", async data => {
                 
             });
         });
