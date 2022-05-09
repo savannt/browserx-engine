@@ -1,6 +1,6 @@
 module.exports = (isLocal) => {
 
-    const AUTO_TIMEOUT = 30 * 1000; // 30 seconds of no activity
+    const AUTO_TIMEOUT = 12 * 1000; // 30 seconds of no activity
     
     const ws = require("ws");
 
