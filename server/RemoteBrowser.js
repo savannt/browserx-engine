@@ -75,6 +75,6 @@ module.exports = async (emulation) => {
     let url = browser.wsEndpoint();
     browser.disconnect();
     return { url, cleanupFunction: () => {
-        process.kill(-1);
+        process.kill();
     }} ;
 }
