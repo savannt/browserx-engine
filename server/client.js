@@ -1,6 +1,6 @@
 module.exports = (isLocal) => {
 
-    const AUTO_TIMEOUT = 60 * 1000; // 60 seconds of no activity
+    const AUTO_TIMEOUT = 30 * 1000; // 30 seconds of no activity
     
     const ws = require("ws");
 
@@ -82,13 +82,12 @@ module.exports = (isLocal) => {
                 proxyClient.send(msg.toString());
                 if(lastTimeout !== -1) {
                     clearTimeout(lastTimeout);
-                    lastTimeout = setTimeout(() => {
-                        console.log("[WSProxy] AutoTimed out");
-                        cdpWS.close();
-                        proxyWS.close();
-                    }, AUTO_TIMEOUT);
                 }
-
+                lastTimeout = setTimeout(() => {
+                    console.log("[WSProxy] AutoTimed out");
+                    cdpWS.close();
+                    proxyWS.close();
+                }, AUTO_TIMEOUT);
             });
 
             cdpWS.on("open", async () => {
