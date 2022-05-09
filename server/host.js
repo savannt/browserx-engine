@@ -51,6 +51,26 @@ server.on("connection", client => {
                 console.log("New client connected: " + message.id);
             }
 
+            if(message.type === "node_cdp_cleanup") {
+                const wsEndpoint = message.wsEndpoint;
+                console.log("[node_cdp_cleanup] Removing node: " + wsEndpoint);
+                // remove wsEndpoint from nodeMap(client.id).sockets and availableSockets
+                const node = nodeMap.get(client.id);
+                if(node) {
+                    const sockets = node.sockets;
+                    const availableSockets = node.availableSockets;
+                    const index = sockets.indexOf(wsEndpoint);
+                    if(index !== -1) {
+                        sockets.splice(index, 1);
+                    }
+                    const index2 = availableSockets.indexOf(wsEndpoint);
+                    if(index2 !== -1) {
+                        availableSockets.splice(index2, 1);
+                    }
+                    nodeMap.set(client.id, { client, availableSockets, sockets });
+                }
+            }
+
             if(message.type === "node_cdp_ready") {
                 const wsEndpoint = message.wsEndpoint;
                 // let port = message.port;

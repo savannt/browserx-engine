@@ -67,14 +67,6 @@ module.exports = (isLocal) => {
                 proxyClient.on("message", msg => {
                     cdpWS.send(msg.toString());
                 });
-
-                // listen for disconnect
-                proxyWS.on("close", () => {
-                    console.log("Cleaning up browser...");
-                    hostWs.send(JSON.stringify({ type: "node_cdp_cleanup", wsEndpoint: proxyUrl }));
-                    cleanupFunc();
-                    createBrowser();
-                });
             });
 
             let lastTimeout = -1;
@@ -87,6 +79,10 @@ module.exports = (isLocal) => {
                     console.log("[WSProxy] AutoTimed out");
                     cdpWS.close();
                     proxyWS.close();
+
+                    hostWs.send(JSON.stringify({ type: "node_cdp_cleanup", wsEndpoint: proxyUrl }));
+                    cleanupFunc();
+                    createBrowser();
                 }, AUTO_TIMEOUT);
             });
 
