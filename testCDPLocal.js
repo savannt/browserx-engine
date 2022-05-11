@@ -1,4 +1,5 @@
 const BrowserX = require("./browserx.js");
+BrowserX.wsURL = "ws://localhost:8060";
 
 (async () => {
     const browser = await BrowserX.launch({ headless: false });

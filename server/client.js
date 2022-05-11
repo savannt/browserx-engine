@@ -1,3 +1,5 @@
+const { ifError } = require("assert");
+
 module.exports = (isLocal) => {
 
     const AUTO_TIMEOUT = 12 * 1000; // 30 seconds of no activity
@@ -56,7 +58,6 @@ module.exports = (isLocal) => {
             const port = Math.floor(8000 + (Math.random() * 1000));
             const proxyUrl = `ws://${externalIP}:${port}/devtools/browser/${wsEndpoint.split("devtools/browser/")[1]}`;
 
-
             const proxyWS = new ws.Server({ port });
             const cdpWS = new ws(wsEndpoint);
 
@@ -94,7 +95,8 @@ module.exports = (isLocal) => {
         }
 
         const internalIp = getInternalIPv4("10.128.0.");
-        const externalIP = await publicIPv4();
+        let externalIP = await publicIPv4();
+        if(isLocal) externalIP = "127.0.0.1";
         console.log("Started client node on: " + internalIp);
             
         let WS_URL = "ws://10.128.0.5:8060";

@@ -7,6 +7,8 @@ const client = require("./server/client.js")(true);
 
 // CLIENT CODE
 const BrowserX = require("./browserx.js");
+BrowserX.wsURL = "ws://localhost:8060";
+
 
 (async () => {
     console.log("BrowserX Local Ready!");

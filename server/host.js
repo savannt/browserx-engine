@@ -117,7 +117,7 @@ server.on("connection", client => {
 
                             if(node.availableSockets.length > 0) {
                                 const socket = node.availableSockets.shift();
-
+                                
                                 client.send(JSON.stringify({
                                     type: "authenticate",
                                     success: true,

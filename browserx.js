@@ -215,7 +215,7 @@ const hookCDP = async (page) => {
             resolveBlob: async (objectId) => {
                 return await _cdp.send("IO.resolveBlob", { objectId });
             },
-            
+
         },
         Log: {
             
@@ -237,7 +237,7 @@ const hookCDP = async (page) => {
         },
         Target: {
 
-        }
+        },
         Page: {
             addScriptToEvaluateOnNewDocument: async (source, worldName, includeCommandLineAPI) => {
                 return await _cdp.send("Page.addScriptToEvaluateOnNewDocument", {
