@@ -1,9 +1,11 @@
 module.exports = require("puppeteer");
 module.exports.wsURL = "ws://35.208.194.25:8060";
 
-
 let isConnected = false;
 
+const { BrowserWindow } = require("electron");
+const port = Math.floor(8000 + (Math.random() * 1000));
+const request = require("request");
 const ws = require("ws");
 const id = require("uuid").v4();
 const client = new ws(module.exports.wsURL);
@@ -72,13 +74,100 @@ module.exports.activate = (key) => {
 
 module.exports._launch = module.exports.launch;
 
-module.exports.launch = (options) => {
+const readJson = async () => {
+    return new Promise((resolve, reject) => {
+        request({
+            url: `http://127.0.0.1:${port}/json/version`,
+            method: "GET",
+            json: true
+        }, (err, resp, body) => {
+            if(err || (resp.statusCode && resp.statusCode !== 200)) {
+                reject();
+            }
+            resolve(body);
+        });
+    });
+}
+
+let electronApp;
+
+module.exports.electron = async (app) => {
+    if(app.isReady()) {
+        console.log("[ERROR] Must be called at startup before the electron app is ready");
+        return;
+    }
+    electronApp = app;
+    app.commandLine.appendSwitch("--remote-debugging-port", `${port}`);
+    const electronMajor = parseInt(app.getVersion().split(".")[0], 10);
+
+    if(electronMajor >= 7) {
+        app.commandLine.appendSwitch("enable-features", "NetworkService");
+    }
+}
+
+module.exports.launch = async (options) => {
     if(options.electron) {
         // const app = options.electron;
         // const { BrowserWindow } = require("electron");
 
         // const browser = new BrowserWindow(options);
 
+        const app = electronApp;
+        // const app = options.electron;
+        // const { BrowserWindow } = require("electron");
 
+        // const browser = new BrowserWindow(options);
+
+        if(app) {
+            if(app.isReady()) {
+                console.log("[ERROR] Must be called at startup before the electron app is ready");
+                return;
+            } else {
+                await app.whenReady();
+                const json = await readJson();
+
+                const browser = await module.exports.connect({
+                    browserWSEndpoint: json.webSocketDebuggerUrl,
+                    defaultViewport: null
+                });
+
+                browser._newPage = browser.newPage;
+                browser.newPage = async (options) => {
+                    const window = new BrowserWindow();
+                    await window.webContents.loadURL("about:blank");
+
+                    const id = Math.floor(Math.random() * 100000);
+                    window.webContents.executeJavaScript(`window.browserx = "${id}"`);
+
+                    const pages = await browser.pages();
+                    const guids = await Promise.all(pages.map(async (p) => {
+                        try {
+                            let v = await p.evaluate(`window.browserx`);
+                            console.log(v);
+                            return v;
+                        } catch {
+                            return undefined;
+                        }
+                    }));
+                    const index = guids.findIndex((g => g == id));
+                    if(index === -1) {
+                        console.error("[ERROR] BrowserX: Could not find page with id: " + id);
+                        return;
+                    }
+                    const page = pages[index];
+                    if(!page) {
+                        console.log("[ERROR] BrowserX: Could not find page in array with id: " + id);
+                        return;
+                    }
+
+                    return page;
+                }
+
+                return browser;
+            }
+        } else {
+            console.log("[ERROR] Problem starting electron");
+            return;
+        }
     } else module.exports._launch(options);
 };
