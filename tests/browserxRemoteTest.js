@@ -1,4 +1,4 @@
-const BrowserX = require("./browserx.js");
+const BrowserX = require("../browserx.js");
 // BrowserX.wsURL = "ws://127.0.0.1:8060"; // FOR LOCAL HOST
 
 (async () => {

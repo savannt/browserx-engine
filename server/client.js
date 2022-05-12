@@ -1,5 +1,3 @@
-const { ifError } = require("assert");
-
 module.exports = (isLocal) => {
 
     const AUTO_TIMEOUT = 12 * 1000; // 30 seconds of no activity

@@ -8,41 +8,44 @@ const port = Math.floor(8000 + (Math.random() * 1000));
 const request = require("request");
 const ws = require("ws");
 const id = require("uuid").v4();
-const client = new ws(module.exports.wsURL);
+
+
+// const client = new ws(module.exports.wsURL);
+
 
 // events
 const EventEmitter = require("events");
 const events = new EventEmitter();
 
-client.on("open", () => {
-    console.log("BrowserX library connected to host");
+// client.on("open", () => {
+//     console.log("BrowserX library connected to host");
 
-    // send auth_client
-    client.send(JSON.stringify({
-        type: "auth_client", id
-    }));
+//     // send auth_client
+//     client.send(JSON.stringify({
+//         type: "auth_client", id
+//     }));
 
-    // on message
-    client.on("message", data => {
-        const message = JSON.parse(data);
-        console.log("\n\n\n\n\n");
-        console.log(message);
+//     // on message
+//     client.on("message", data => {
+//         const message = JSON.parse(data);
+//         console.log("\n\n\n\n\n");
+//         console.log(message);
 
-        if(message.type === "authenticate") {
-            const success = message.success;
-            if(success) {
+//         if(message.type === "authenticate") {
+//             const success = message.success;
+//             if(success) {
                 
-                const socket = message.socket;
-                console.log("Found socket: " + socket);
-                events.emit("socket", socket);
-            } else {
-                console.error("BrowserX: Failed to authenticate. " + message.error);
-            }
-        }
-    });
-    isConnected = true;
-    if(module.exports.onConnect) module.exports.onConnect();
-});
+//                 const socket = message.socket;
+//                 console.log("Found socket: " + socket);
+//                 events.emit("socket", socket);
+//             } else {
+//                 console.error("BrowserX: Failed to authenticate. " + message.error);
+//             }
+//         }
+//     });
+//     isConnected = true;
+//     if(module.exports.onConnect) module.exports.onConnect();
+// });
 
 const hookCDP = async (page) => {
     const _cdp = await page.target().createCDPSession();
@@ -482,6 +485,13 @@ const hookCDP = async (page) => {
         }
     }
     return page;
+}
+
+
+module.exports.activate2 = async (url) => {
+    await module.exports.connect({
+        browserWSEndpoint: url,
+    });
 }
 
 module.exports.activate = (key) => {
