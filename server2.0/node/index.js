@@ -1,3 +1,5 @@
+require("../pm2Link.js")();
+
 const jwt = require("jsonwebtoken");
 const getPort = require("port.js");
 const browser = require("./browser.js");
