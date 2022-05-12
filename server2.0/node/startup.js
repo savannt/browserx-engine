@@ -8,9 +8,9 @@ if (!fs.existsSync("./config.json")) {
         console.log("[Startup] Pulled latest code, restarting...");
         // create config.json
         fs.writeFileSync("./config.json", JSON.stringify({
-            port: 8080,
-            host: "localhost",
-            isLocal: true,
+            port: 8060,
+            host: "127.0.0.1",
+            isLocal: false,
             browsers: 2,
             lastRestart: Date.now()
         }));
