@@ -23,6 +23,7 @@ if (!fs.existsSync("./config.json")) {
     const isLocal = config.isLocal;
     const sinceLastRestart = Date.now() - config.lastRestart;
 
+    console.log("[Startup] Time since last restart: " + sinceLastRestart + "ms");
     if(sinceLastRestart > 1000 * 10 || sinceLastRestart < 0) {
         console.log("[Startup] Not enough time since last restart, restarting...");
 
