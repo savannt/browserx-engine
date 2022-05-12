@@ -1,3 +1,5 @@
+require("../pm2Link.js")();
+
 const url = require("url");
 const jwt = require("jsonwebtoken");
 const WebSocket = require("ws");
