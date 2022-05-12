@@ -21,6 +21,8 @@ if (!fs.existsSync("./config.json")) {
     const port = config.port;
     const host = config.host;
     const isLocal = config.isLocal;
+    console.log(Date.now());
+    console.log(config.lastRestart);
     const sinceLastRestart = Date.now() - config.lastRestart;
 
     console.log("[Startup] Time since last restart: " + sinceLastRestart + "ms");
