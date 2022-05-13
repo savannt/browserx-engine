@@ -20,7 +20,8 @@ module.exports = (port) => {
         console.log("Fresh browsers: " + proxyArray.length);
         console.log("Used browsers: " + ((nodeArray.length * 10) - proxyArray.length));
         console.log("Clients: " + clientArray.length);
-    }, 500);
+        console.log("===============================");
+    }, 1000);
 
     const wss = new WebSocket.Server({ port });
     // on connection
