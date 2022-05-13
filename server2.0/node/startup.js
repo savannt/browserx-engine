@@ -40,7 +40,7 @@ const isLocal = config.isLocal;
 const browsers = config.browsers;
 const sinceLastRestart = Date.now() - config.lastRestart;
 
-host = "35.208.194.25";
+host = "10.128.0.2";
 port = 8060;
 
 if(sinceLastRestart > 1000 * 10 || sinceLastRestart < 0) {
