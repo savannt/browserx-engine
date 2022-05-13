@@ -1,4 +1,4 @@
-require("../pm2Link.js")();
+require("../pm2Link.js")("hostServer");
 
 const url = require("url");
 const jwt = require("jsonwebtoken");
