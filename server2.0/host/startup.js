@@ -15,11 +15,10 @@ if(!configExists) {
     fs.writeFileSync("./config.json", JSON.stringify(config, null, 4));
 }
 
-const port = config.port;
+let port = config.port;
+port = 8060;
 const host = config.host;
 const isLocal = config.isLocal;
-console.log(Date.now());
-console.log(config.lastRestart);
 const sinceLastRestart = Date.now() - config.lastRestart;
 
 console.log("[Startup] Time since last restart: " + sinceLastRestart + "ms");
@@ -34,5 +33,5 @@ if(sinceLastRestart > 1000 * 10 || sinceLastRestart < 0) {
     });
 } else {
     console.log("[Startup] Started host on version " + require("./about.json").version);
-    require("./index.js")(port, host, isLocal);
+    require("./index.js")(port);
 }

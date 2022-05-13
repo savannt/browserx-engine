@@ -10,7 +10,7 @@ const NODE_TOKEN = "e6147f42-deef-4078-99c5-9a5cfedd419a";
 
 const AUTO_TIMEOUT = 12 * 1000; // 12 seconds of no activity
 
-module.exports = async (hostPort, hostHost, isLocal, browsers) => {
+module.exports = async (hostHost, hostPort, wsHost, isLocal, browsers) => {
 
     const token = jwt.sign({
         time: Date.now()
@@ -72,7 +72,7 @@ module.exports = async (hostPort, hostHost, isLocal, browsers) => {
 
         ws.send(JSON.stringify({
             type: "browser_ready",
-            ws: `ws://${hostHost}:${proxyPort}`,
+            ws: `ws://${wsHost}:${proxyPort}`,
         }));
     }
 

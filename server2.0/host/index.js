@@ -7,7 +7,7 @@ const WebSocket = require("ws");
 const CLIENT_TOKEN = "ca982417-654e-48cc-bc96-6c17da20e457";
 const NODE_TOKEN = "e6147f42-deef-4078-99c5-9a5cfedd419a";
 
-module.exports = (port, host, isLocal) => {
+module.exports = (port) => {
     // create WebSocket server
     
     const clientArray = [];
