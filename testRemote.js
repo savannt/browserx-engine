@@ -1,5 +1,5 @@
-(async () =>  {
-    for(let i = 0; i < 5; i++) {
+for(let i = 0; i < 5; i++) {
+    (async () =>  {
         const jwt = require("jsonwebtoken");
         const token = jwt.sign({
             time: Date.now()
@@ -18,7 +18,6 @@
         // screenshot
         await page.screenshot({ path: "google.png" });
         console.log("SCREENSHOT PAGE!");
-        // page.close();
-        // browser.close();
-    }
-})();
+    
+    })();
+}
