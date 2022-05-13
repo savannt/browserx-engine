@@ -106,7 +106,7 @@ module.exports = (port) => {
             }
 
             // if proxy connection available
-            if(proxyArray.length > 0) {
+            if(proxyArray.length !== 0) {
                 proxyConnection();
             } else {
                 let interval = setInterval(() => {
