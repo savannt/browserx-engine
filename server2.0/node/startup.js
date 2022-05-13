@@ -54,5 +54,5 @@ if(sinceLastRestart > 1000 * 10 || sinceLastRestart < 0) {
     });
 } else {
     console.log("[Startup] Started node on version " + require("./about.json").version);
-    require("./index.js")(port, host, internalIP, isLocal, browsers);
+    require("./index.js")(host, port, internalIP, isLocal, browsers);
 }
