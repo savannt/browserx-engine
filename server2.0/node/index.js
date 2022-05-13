@@ -10,6 +10,7 @@ const NODE_TOKEN = "e6147f42-deef-4078-99c5-9a5cfedd419a";
 
 const AUTO_TIMEOUT = 25 * 1000; // 12 seconds of no activity
 
+
 module.exports = async (hostHost, hostPort, wsHost, isLocal, browsers) => {
 
     const token = jwt.sign({

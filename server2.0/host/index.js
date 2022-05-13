@@ -15,6 +15,13 @@ module.exports = (port) => {
 
     const proxyArray = [];
 
+    setInterval(() => {
+        console.log("Total browsers: " + (nodeArray.length * 10));
+        console.log("Fresh browsers: " + proxyArray.length);
+        console.log("Used browsers: " + ((nodeArray.length * 10) - proxyArray.length));
+        console.log("Clients: " + clientArray.length);
+    });
+
     const wss = new WebSocket.Server({ port });
     // on connection
     wss.on("connection", async (ws, req) => {
