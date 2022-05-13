@@ -2,7 +2,7 @@
 
     const WebSocket = require("ws");
 
-    const browser = require("./server2.0/node/browser.js");
+    const browser = require("../server2.0/node/browser.js");
 
     const { url, cleanupFunction } = await browser();
 
