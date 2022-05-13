@@ -62,6 +62,17 @@ module.exports = (port) => {
             nodeArray.push(ws);
             console.log("[WS] +1 Node successfully connected");
         }
+
+        // on disconnect
+        ws.on("close", () => {
+            if(isClient) {
+                clientArray.splice(clientArray.indexOf(ws), 1);
+                console.log("[WS] -1 Client successfully disconnected");
+            } else {
+                nodeArray.splice(nodeArray.indexOf(ws), 1);
+                console.log("[WS] -1 Node successfully disconnected");
+            }
+        });
         
 
 
