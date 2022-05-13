@@ -1,6 +1,5 @@
-
-const res = require("express/lib/response");
-const browserx = require("./browserx2.js");
+const browserx = require("./browserx");
+browserx.authorizeCloud("ca982417-654e-48cc-bc96-6c17da20e457");
 
 browserx.define("screenshotGoogle", async (page, options) => {
     await page.goto("https://google.com");

@@ -15,6 +15,8 @@ module.exports = (port) => {
 
     const proxyArray = [];
 
+    const childrenMap = new Map();
+
     setInterval(() => {
         console.log("Total browsers: " + (nodeArray.length * 10));
         console.log("Fresh browsers: " + proxyArray.length);
@@ -71,6 +73,15 @@ module.exports = (port) => {
             } else {
                 nodeArray.splice(nodeArray.indexOf(ws), 1);
                 console.log("[WS] -1 Node successfully disconnected");
+
+                // find all children ws in childrenMap and remove them from proxyArray
+                const children = childrenMap.get(ws);
+                if(children) {
+                    children.forEach(child => {
+                        proxyArray.splice(proxyArray.indexOf(child), 1);
+                    });
+                }
+                childrenMap.delete(ws);
             }
         });
         
@@ -150,8 +161,15 @@ module.exports = (port) => {
                 }
 
                 if(json.type === "browser_ready") {
-                    const ws = new WebSocket(json.ws);
-                    proxyArray.push(ws);
+                    const websocket = new WebSocket(json.ws);
+                    proxyArray.push(websocket);
+                    
+                    if(childrenMap.has(ws)) {
+                        childrenMap.get(ws).push(websocket);
+                    } else {
+                        childrenMap.set(ws, [websocket]);
+                    }
+
                     console.log("[WS] Browser spawned " + json.ws);
                 }
             });

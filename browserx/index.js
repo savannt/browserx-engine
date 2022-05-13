@@ -1,21 +1,70 @@
 module.exports = require("puppeteer");
 module.exports.wsURL = "ws://35.208.194.25:8060";
 
-let isConnected = false;
+
+
+
+const jwt = require("jsonwebtoken");
+
+const definitions = new Map();
+
+module.exports = require("puppeteer");
+
+module.exports.authorizeCloud = (key) => {
+    module.exports.wsKey = key;
+}
+
+module.exports.generateToken = () => {
+    // if no key
+    if(!module.exports.wsKey) throw new Error("[browserx] No key provided, call browserx.authorizeCloud(key) first");
+    return jwt.sign({
+        time: Date.now()
+    }, module.exports.wsKey);
+}
+
+module.exports._connect = module.exports.connect;
+module.exports.connect = async (options) => {
+    if(typeof options === "undefined") {
+        return await module.exports._connect({
+            browserWSEndpoint: `${module.exports.wsURL}?token=${module.exports.generateToken()}`
+        });
+    }
+    if(typeof options === "string") {
+        return await module.exports._connect({
+            browserWSEndpoint: `${module.exports.wsURL}?token=${options}`
+        });
+    } else {
+        return await module.exports._connect(options);
+    }
+}
+
+module.exports.define = (name, fn) => {
+    if(!name) throw new Error("[browserx] No name provided for browserx.define");
+    
+    definitions.set(name, fn);
+};
+module.exports.invoke = async (name, options) => {
+    if(!name) throw new Error("[browserx] No name provided for browserx.invoke");
+
+    const fn = definitions.get(name);
+    if(!fn) throw new Error("[browserx] No definition found for " + name);
+
+    const browser = await module.exports.connect();
+    const page = await browser.newPage();
+    let result = await fn(page, options);
+
+    page.close();
+    browser.close();
+    
+    return result;
+}
+
+
+
 
 const { BrowserWindow } = require("electron");
 const port = Math.floor(8000 + (Math.random() * 1000));
 const request = require("request");
-const ws = require("ws");
-const id = require("uuid").v4();
-
-
-// const client = new ws(module.exports.wsURL);
-
-
-// events
-const EventEmitter = require("events");
-const events = new EventEmitter();
 
 // client.on("open", () => {
 //     console.log("BrowserX library connected to host");
@@ -46,6 +95,9 @@ const events = new EventEmitter();
 //     isConnected = true;
 //     if(module.exports.onConnect) module.exports.onConnect();
 // });
+
+
+
 
 const hookCDP = async (page) => {
     const _cdp = await page.target().createCDPSession();
@@ -485,41 +537,6 @@ const hookCDP = async (page) => {
         }
     }
     return page;
-}
-
-
-module.exports.activate2 = async (url) => {
-    await module.exports.connect({
-        browserWSEndpoint: url,
-    });
-}
-
-module.exports.activate = (key) => {
-    return new Promise(r => {
-        const _r = () => {
-            console.log("Key: " + key);
-            client.send(JSON.stringify({
-                type: "authenticate", key
-            }));
-            events.once("socket", async socket => {
-                // pptr.connect
-                const browser = await module.exports.connect({
-                    browserWSEndpoint: socket
-                });
-                r(browser);
-            });
-        }
-
-        if(!isConnected) {
-            console.log(" ... waiting for connection");
-            module.exports.onConnect = () => {
-                _r();
-            };
-        } else {
-            console.log(" ... connected!");
-            _r();
-        }
-    });
 }
 
 module.exports._launch = module.exports.launch;
