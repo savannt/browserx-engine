@@ -8,7 +8,7 @@ const WebSocket = require("ws");
 const CLIENT_TOKEN = "ca982417-654e-48cc-bc96-6c17da20e457";
 const NODE_TOKEN = "e6147f42-deef-4078-99c5-9a5cfedd419a";
 
-const AUTO_TIMEOUT = 8 * 1000; // 12 seconds of no activity
+const AUTO_TIMEOUT = 60 * 1000; // 12 seconds of no activity
 
 module.exports = async (hostHost, hostPort, wsHost, isLocal, browsers) => {
 

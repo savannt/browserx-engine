@@ -67,7 +67,7 @@ module.exports = async (cleanedup) => {
             '--password-store=basic',
             '--use-gl=swiftshader',
             '--use-mock-keychain',
-            `--user-agent=${this.userAgent}`,
+            `--user-agent=${userAgent}`,
             '--no-sandbox',
             '--disable-infobars'
         ]
