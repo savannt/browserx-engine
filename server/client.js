@@ -92,7 +92,7 @@ module.exports = (isLocal) => {
             });
         }
 
-        const internalIp = getInternalIPv4("10.128.0.");
+        const internalIp = getInternalIPv4("10.128.");
         let externalIP = await publicIPv4();
         if(isLocal) externalIP = "127.0.0.1";
         console.log("Started client node on: " + internalIp);

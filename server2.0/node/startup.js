@@ -33,7 +33,7 @@ const getInternalIPv4 = (includes) => {
     return "127.0.0.1";
 }
 
-const internalIP = getInternalIPv4("10.128.0");
+const internalIP = getInternalIPv4("10.128.");
 let port = config.port;
 let host = config.host;
 const isLocal = config.isLocal;
